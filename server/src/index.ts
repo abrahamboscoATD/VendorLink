@@ -12,16 +12,16 @@ const server = fastify({});
 const port = process.env.PORT || 8080;
 const MONGOOSE_URI = process.env.DB_URL || "";
 
-//Fastify Cors Plugin;
+// Fastify Cors Plugin
 server.register(fastifyCors);
 
-//Coockie plugin;
+// Cookie plugin
 server.register(fastifyCookie, {
   secret: "my-secret",
   hook: "onRequest",
 });
 
-//Database Connection;
+// Database Connection
 mongoose
   .connect(MONGOOSE_URI)
   .then(() => {
@@ -31,26 +31,25 @@ mongoose
     console.log(e);
   });
 
-//Adding HTTP Logger;
+// Adding HTTP Logger
 server.addHook("onResponse", logger);
 
-//Registering Routes as Plugin;
+// Registering Routes as Plugin
 connectRoutes(server);
 
-//Root Route;
+// Root Route
 server.get("/", async (request, reply) => {
   return reply.status(301).send("Hi, Don't worry I am working");
 });
 
 const start = async () => {
   try {
-    await server.listen({
-      port: Number(port),
-    });
-    console.log("Server Started Successfully http://localhost:8080");
+    await server.listen(Number(port), '0.0.0.0');
+    console.log(`Server Started Successfully on http://localhost:${port}`);
   } catch (e) {
     server.log.error(e);
     process.exit(1);
   }
 };
+
 start();
